@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grammar Checker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title-row">
+                <h1>Grammar Checker</h1>
+                <button id="settingsBtn" class="settings-btn" title="Settings">
+                    <span class="settings-icon">⚙️</span>
+                </button>
+            </div>
+            <p class="subtitle">Paste → Press Enter → Auto-copy result</p>
+        </div>
+
+        <!-- Settings Panel -->
+        <div id="settingsPanel" class="settings-panel" style="display: none;">
+            <h3>Settings</h3>
+            <div class="api-key-section">
+                <label for="apiKeyInput">OpenAI API Key:</label>
+                <div class="api-key-input-group">
+                    <input type="password" id="apiKeyInput" class="api-key-input" placeholder="sk-proj-...">
+                    <button id="toggleApiKey" class="toggle-btn" type="button">
+                        <span class="eye-icon">👁️</span>
+                    </button>
+                </div>
+                <div class="api-key-actions">
+                    <button id="saveApiKey" class="btn small primary">Save</button>
+                    <button id="testApiKey" class="btn small secondary">Test</button>
+                </div>
+                <p class="api-key-help">Get your API key from <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI Platform</a></p>
+            </div>
+            <button id="closeSettings" class="btn small tertiary">Close Settings</button>
+        </div>
+
+        <div class="main-section">
+            <textarea id="textInput" placeholder="Paste your text here and press Enter..."></textarea>
+
+            <div class="tone-section">
+                <label for="toneSelect">Tone:</label>
+                <select id="toneSelect" class="tone-select">
+                    <option value="professional">Professional</option>
+                    <option value="casual">Casual</option>
+                    <option value="friendly">Friendly</option>
+                    <option value="formal">Formal</option>
+                    <option value="creative">Creative</option>
+                    <option value="concise">Concise</option>
+                </select>
+            </div>
+
+            <div class="button-group">
+                <button id="paraphrase" class="btn primary">
+                    <span class="btn-icon">↻</span>
+                    Paraphrase (or press Enter)
+                </button>
+            </div>
+        </div>
+
+        <div id="loading" class="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>Processing...</p>
+        </div>
+
+        <div class="status" id="status"></div>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>
