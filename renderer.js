@@ -26,7 +26,6 @@ const backToSettingsBtn = document.getElementById('backToSettings');
 const customToneName = document.getElementById('customToneName');
 const customTonePrompt = document.getElementById('customTonePrompt');
 const saveCustomToneBtn = document.getElementById('saveCustomTone');
-const testCustomToneBtn = document.getElementById('testCustomTone');
 
 // API Configuration
 const API_URL = 'https://api.openai.com/v1/chat/completions';
@@ -139,10 +138,6 @@ saveCustomToneBtn.addEventListener('click', () => {
     saveCustomTone();
 });
 
-testCustomToneBtn.addEventListener('click', () => {
-    testCustomTone();
-});
-
 // Tab Management Functions
 function showCustomToneTab() {
     mainSettingsTab.style.display = 'none';
@@ -199,40 +194,6 @@ function saveCustomTone() {
     }, 1000);
 }
 
-async function testCustomTone() {
-    const name = customToneName.value.trim();
-    const prompt = customTonePrompt.value.trim();
-
-    if (!name || !prompt) {
-        showStatus('Please fill in both tone name and prompt first', 'error');
-        return;
-    }
-
-    const apiKey = getApiKey();
-    if (!apiKey) {
-        showStatus('Please set your OpenAI API key first', 'error');
-        return;
-    }
-
-    const testText = "This is a test message to see how your custom tone works.";
-    const fullPrompt = `${prompt}\n\nPlease rewrite the following text using this tone and style:\n\n${testText}`;
-
-    testCustomToneBtn.disabled = true;
-    testCustomToneBtn.innerHTML = '<span class="btn-icon">⏳</span>Testing...';
-
-    try {
-        const result = await callOpenAI(fullPrompt, apiKey);
-
-        // Show the result in a simple alert for now
-        alert(`Test Result for "${name}":\n\n${result}`);
-        showStatus('Custom tone test completed! ✓', 'success');
-    } catch (error) {
-        showStatus(`Test failed: ${error.message}`, 'error');
-    } finally {
-        testCustomToneBtn.disabled = false;
-        testCustomToneBtn.innerHTML = '<span class="btn-icon">🧪</span>Test Tone';
-    }
-}
 
 function displayCustomTones() {
     customTonesList.innerHTML = '';
