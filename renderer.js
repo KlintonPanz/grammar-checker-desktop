@@ -6,6 +6,7 @@ const paraphraseBtn = document.getElementById('paraphrase');
 const toneSelect = document.getElementById('toneSelect');
 const loading = document.getElementById('loading');
 const status = document.getElementById('status');
+const mainSection = document.querySelector('.main-section');
 
 // Settings elements
 const settingsBtn = document.getElementById('settingsBtn');
@@ -45,11 +46,19 @@ let customTones = JSON.parse(localStorage.getItem('customTones')) || {};
 
 // Settings Panel Events
 settingsBtn.addEventListener('click', () => {
-    settingsPanel.style.display = settingsPanel.style.display === 'none' ? 'block' : 'none';
+    const isSettingsVisible = settingsPanel.style.display !== 'none';
+    if (isSettingsVisible) {
+        settingsPanel.style.display = 'none';
+        mainSection.style.display = 'flex';
+    } else {
+        settingsPanel.style.display = 'block';
+        mainSection.style.display = 'none';
+    }
 });
 
 closeSettingsBtn.addEventListener('click', () => {
     settingsPanel.style.display = 'none';
+    mainSection.style.display = 'flex';
 });
 
 // API Key Toggle Visibility
