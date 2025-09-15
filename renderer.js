@@ -16,11 +16,22 @@ const toggleApiKeyBtn = document.getElementById('toggleApiKey');
 const saveApiKeyBtn = document.getElementById('saveApiKey');
 const testApiKeyBtn = document.getElementById('testApiKey');
 
+// Custom tone elements
+const createCustomToneBtn = document.getElementById('createCustomTone');
+const customTonesList = document.getElementById('customTonesList');
+const mainSettingsTab = document.getElementById('mainSettingsTab');
+const customToneTab = document.getElementById('customToneTab');
+const backToSettingsBtn = document.getElementById('backToSettings');
+const customToneName = document.getElementById('customToneName');
+const customTonePrompt = document.getElementById('customTonePrompt');
+const saveCustomToneBtn = document.getElementById('saveCustomTone');
+const testCustomToneBtn = document.getElementById('testCustomTone');
+
 // API Configuration
 const API_URL = 'https://api.openai.com/v1/chat/completions';
 
 // Tone descriptions for AI prompts
-const tones = {
+const defaultTones = {
     professional: 'professional and business-appropriate',
     casual: 'casual and conversational',
     friendly: 'friendly and warm',
@@ -28,6 +39,9 @@ const tones = {
     creative: 'creative and engaging',
     concise: 'concise and to-the-point'
 };
+
+// Custom tones storage
+let customTones = JSON.parse(localStorage.getItem('customTones')) || {};
 
 // Settings Panel Events
 settingsBtn.addEventListener('click', () => {
@@ -103,12 +117,206 @@ function getApiKey() {
     return null;
 }
 
+// Custom Tone Events
+createCustomToneBtn.addEventListener('click', () => {
+    showCustomToneTab();
+});
+
+backToSettingsBtn.addEventListener('click', () => {
+    showMainSettingsTab();
+});
+
+saveCustomToneBtn.addEventListener('click', () => {
+    saveCustomTone();
+});
+
+testCustomToneBtn.addEventListener('click', () => {
+    testCustomTone();
+});
+
+// Tab Management Functions
+function showCustomToneTab() {
+    mainSettingsTab.style.display = 'none';
+    customToneTab.style.display = 'block';
+    customToneName.focus();
+}
+
+function showMainSettingsTab() {
+    customToneTab.style.display = 'none';
+    mainSettingsTab.style.display = 'block';
+    // Clear form
+    customToneName.value = '';
+    customTonePrompt.value = '';
+}
+
+// Custom Tone Management Functions
+function saveCustomTone() {
+    const name = customToneName.value.trim();
+    const prompt = customTonePrompt.value.trim();
+
+    if (!name || !prompt) {
+        showStatus('Please fill in both tone name and prompt', 'error');
+        return;
+    }
+
+    // Create unique key for the tone
+    const toneKey = name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+
+    // Check if tone already exists
+    if (customTones[toneKey]) {
+        if (!confirm(`A tone named "${name}" already exists. Do you want to overwrite it?`)) {
+            return;
+        }
+    }
+
+    // Save the custom tone
+    customTones[toneKey] = {
+        name: name,
+        prompt: prompt,
+        created: new Date().toISOString()
+    };
+
+    localStorage.setItem('customTones', JSON.stringify(customTones));
+
+    showStatus(`Custom tone "${name}" saved successfully! ✓`, 'success');
+
+    // Update the UI
+    updateToneDropdown();
+    displayCustomTones();
+
+    // Go back to main settings
+    setTimeout(() => {
+        showMainSettingsTab();
+    }, 1000);
+}
+
+async function testCustomTone() {
+    const name = customToneName.value.trim();
+    const prompt = customTonePrompt.value.trim();
+
+    if (!name || !prompt) {
+        showStatus('Please fill in both tone name and prompt first', 'error');
+        return;
+    }
+
+    const apiKey = getApiKey();
+    if (!apiKey) {
+        showStatus('Please set your OpenAI API key first', 'error');
+        return;
+    }
+
+    const testText = "This is a test message to see how your custom tone works.";
+    const fullPrompt = `${prompt}\n\nPlease rewrite the following text using this tone and style:\n\n${testText}`;
+
+    testCustomToneBtn.disabled = true;
+    testCustomToneBtn.innerHTML = '<span class="btn-icon">⏳</span>Testing...';
+
+    try {
+        const result = await callOpenAI(fullPrompt, apiKey);
+
+        // Show the result in a simple alert for now
+        alert(`Test Result for "${name}":\n\n${result}`);
+        showStatus('Custom tone test completed! ✓', 'success');
+    } catch (error) {
+        showStatus(`Test failed: ${error.message}`, 'error');
+    } finally {
+        testCustomToneBtn.disabled = false;
+        testCustomToneBtn.innerHTML = '<span class="btn-icon">🧪</span>Test Tone';
+    }
+}
+
+function displayCustomTones() {
+    customTonesList.innerHTML = '';
+
+    const toneKeys = Object.keys(customTones);
+    if (toneKeys.length === 0) {
+        customTonesList.innerHTML = '<p style="color: #6b7280; font-size: 14px; text-align: center; padding: 16px;">No custom tones created yet</p>';
+        return;
+    }
+
+    toneKeys.forEach(key => {
+        const tone = customTones[key];
+        const toneItem = document.createElement('div');
+        toneItem.className = 'custom-tone-item';
+
+        toneItem.innerHTML = `
+            <div class="custom-tone-name">${tone.name}</div>
+            <div class="custom-tone-actions">
+                <button class="btn mini secondary" onclick="editCustomTone('${key}')">Edit</button>
+                <button class="btn mini danger" onclick="deleteCustomTone('${key}')">Delete</button>
+            </div>
+        `;
+
+        customTonesList.appendChild(toneItem);
+    });
+}
+
+function editCustomTone(toneKey) {
+    const tone = customTones[toneKey];
+    customToneName.value = tone.name;
+    customTonePrompt.value = tone.prompt;
+    showCustomToneTab();
+}
+
+function deleteCustomTone(toneKey) {
+    const tone = customTones[toneKey];
+    if (confirm(`Are you sure you want to delete the "${tone.name}" tone?`)) {
+        delete customTones[toneKey];
+        localStorage.setItem('customTones', JSON.stringify(customTones));
+        displayCustomTones();
+        updateToneDropdown();
+        showStatus(`Tone "${tone.name}" deleted`, 'success');
+    }
+}
+
+function updateToneDropdown() {
+    // Clear existing options
+    toneSelect.innerHTML = '';
+
+    // Add default tones
+    Object.keys(defaultTones).forEach(key => {
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = key.charAt(0).toUpperCase() + key.slice(1);
+        toneSelect.appendChild(option);
+    });
+
+    // Add custom tones if any exist
+    const customToneKeys = Object.keys(customTones);
+    if (customToneKeys.length > 0) {
+        // Add separator
+        const separator = document.createElement('option');
+        separator.disabled = true;
+        separator.textContent = '--- Custom Tones ---';
+        toneSelect.appendChild(separator);
+
+        // Add custom tones
+        customToneKeys.forEach(key => {
+            const tone = customTones[key];
+            const option = document.createElement('option');
+            option.value = `custom_${key}`;
+            option.textContent = tone.name;
+            toneSelect.appendChild(option);
+        });
+    }
+
+    // Restore selected tone
+    const savedTone = localStorage.getItem('selectedTone');
+    if (savedTone && document.querySelector(`option[value="${savedTone}"]`)) {
+        toneSelect.value = savedTone;
+    }
+}
+
 // Load saved API key on startup
 document.addEventListener('DOMContentLoaded', () => {
     const savedKey = localStorage.getItem('openai_api_key');
     if (savedKey) {
         apiKeyInput.value = savedKey;
     }
+
+    // Initialize custom tones
+    displayCustomTones();
+    updateToneDropdown();
 });
 
 // Test API Connection
@@ -172,9 +380,24 @@ async function paraphrase() {
     }
 
     const selectedTone = toneSelect.value;
-    const toneDescription = tones[selectedTone];
+    let prompt;
 
-    const prompt = `Please paraphrase the following text to make it sound ${toneDescription} and clear. Only return the paraphrased version:\n\n${text}`;
+    // Check if it's a custom tone
+    if (selectedTone.startsWith('custom_')) {
+        const toneKey = selectedTone.replace('custom_', '');
+        const customTone = customTones[toneKey];
+
+        if (customTone) {
+            prompt = `${customTone.prompt}\n\nPlease rewrite the following text using this tone and style:\n\n${text}`;
+        } else {
+            showStatus('Custom tone not found. Please select a different tone.', 'error');
+            return;
+        }
+    } else {
+        // Use default tone
+        const toneDescription = defaultTones[selectedTone];
+        prompt = `Please paraphrase the following text to make it sound ${toneDescription} and clear. Only return the paraphrased version:\n\n${text}`;
+    }
 
     await processText('paraphrase', prompt, apiKey);
 }

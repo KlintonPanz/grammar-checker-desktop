@@ -20,22 +20,71 @@
 
         <!-- Settings Panel -->
         <div id="settingsPanel" class="settings-panel" style="display: none;">
-            <h3>Settings</h3>
-            <div class="api-key-section">
-                <label for="apiKeyInput">OpenAI API Key:</label>
-                <div class="api-key-input-group">
-                    <input type="password" id="apiKeyInput" class="api-key-input" placeholder="sk-proj-...">
-                    <button id="toggleApiKey" class="toggle-btn" type="button">
-                        <span class="eye-icon">👁️</span>
+            <!-- Main Settings Tab -->
+            <div id="mainSettingsTab" class="settings-tab">
+                <h3>Settings</h3>
+                <div class="api-key-section">
+                    <label for="apiKeyInput">OpenAI API Key:</label>
+                    <div class="api-key-input-group">
+                        <input type="password" id="apiKeyInput" class="api-key-input" placeholder="sk-proj-...">
+                        <button id="toggleApiKey" class="toggle-btn" type="button">
+                            <span class="eye-icon">👁️</span>
+                        </button>
+                    </div>
+                    <div class="api-key-actions">
+                        <button id="saveApiKey" class="btn small primary">Save</button>
+                        <button id="testApiKey" class="btn small secondary">Test</button>
+                    </div>
+                    <p class="api-key-help">Get your API key from <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI Platform</a></p>
+                </div>
+
+                <div class="custom-tone-section">
+                    <h4>Custom Tones</h4>
+                    <button id="createCustomTone" class="btn small secondary">
+                        <span class="btn-icon">✨</span>
+                        Create Your Own Tone
                     </button>
+                    <div id="customTonesList" class="custom-tones-list"></div>
                 </div>
-                <div class="api-key-actions">
-                    <button id="saveApiKey" class="btn small primary">Save</button>
-                    <button id="testApiKey" class="btn small secondary">Test</button>
-                </div>
-                <p class="api-key-help">Get your API key from <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI Platform</a></p>
+
+                <button id="closeSettings" class="btn small tertiary">Close Settings</button>
             </div>
-            <button id="closeSettings" class="btn small tertiary">Close Settings</button>
+
+            <!-- Custom Tone Creator Tab -->
+            <div id="customToneTab" class="settings-tab" style="display: none;">
+                <div class="tab-header">
+                    <button id="backToSettings" class="back-btn">
+                        <span class="back-icon">←</span>
+                        Back to Settings
+                    </button>
+                    <h3>Create Custom Tone</h3>
+                </div>
+
+                <div class="custom-tone-form">
+                    <div class="form-group">
+                        <label for="customToneName">Tone Name:</label>
+                        <input type="text" id="customToneName" class="custom-input" placeholder="e.g., Marketing Expert, Academic Writer">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customTonePrompt">Custom Persona/Prompt:</label>
+                        <textarea id="customTonePrompt" class="custom-textarea" rows="6" placeholder="Describe how this tone should write. Be specific about style, personality, and approach.
+
+Example: 'Write like an experienced email marketing professional. Use persuasive language, create urgency, include call-to-actions, and be engaging but professional.'"></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button id="testCustomTone" class="btn small secondary">
+                            <span class="btn-icon">🧪</span>
+                            Test Tone
+                        </button>
+                        <button id="saveCustomTone" class="btn small primary">
+                            <span class="btn-icon">💾</span>
+                            Save & Add to List
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="main-section">
