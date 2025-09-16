@@ -4,27 +4,35 @@
     box-sizing: border-box;
 }
 
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: #f8fafc;
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #ffffff;
     color: #1e293b;
     overflow: hidden;
     -webkit-font-smoothing: antialiased;
     min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark mode */
+body.dark-mode {
+    background: #0f172a;
+    color: #f1f5f9;
 }
 
 .container {
-    padding: 40px;
+    padding: 60px 40px 40px;
     height: 100vh;
     display: flex;
     flex-direction: column;
-    max-width: 650px;
+    max-width: 700px;
     margin: 0 auto;
     justify-content: flex-start;
-    background: #ffffff;
-    border-radius: 16px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    border: 1px solid #e2e8f0;
+    background: transparent;
 }
 
 .header {
@@ -35,20 +43,30 @@ body {
 .title-row {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 16px;
+    justify-content: space-between;
     margin-bottom: 12px;
+}
+
+.header-buttons {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
 .header h1 {
     color: #1e293b;
-    font-size: 28px;
+    font-size: 32px;
     font-weight: 600;
     margin: 0;
     letter-spacing: -0.5px;
+    transition: color 0.3s ease;
 }
 
-.settings-btn {
+body.dark-mode .header h1 {
+    color: #f1f5f9;
+}
+
+.settings-btn, .theme-toggle-btn {
     background: #f1f5f9;
     border: 1px solid #e2e8f0;
     border-radius: 8px;
@@ -59,11 +77,24 @@ body {
     color: #64748b;
 }
 
-.settings-btn:hover {
+body.dark-mode .settings-btn,
+body.dark-mode .theme-toggle-btn {
+    background: #1e293b;
+    border-color: #334155;
+    color: #94a3b8;
+}
+
+.settings-btn:hover, .theme-toggle-btn:hover {
     background: #e2e8f0;
     color: #475569;
     transform: translateY(-1px);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .settings-btn:hover,
+body.dark-mode .theme-toggle-btn:hover {
+    background: #334155;
+    color: #e2e8f0;
 }
 
 .settings-icon {
@@ -74,6 +105,11 @@ body {
     color: #64748b;
     font-size: 14px;
     font-weight: 400;
+    transition: color 0.3s ease;
+}
+
+body.dark-mode .subtitle {
+    color: #94a3b8;
 }
 
 .main-section {
@@ -95,11 +131,17 @@ body {
     resize: vertical;
     outline: none;
     background: #ffffff;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     line-height: 1.6;
     min-height: 150px;
     max-height: 400px;
     color: #1e293b;
+}
+
+body.dark-mode #textInput {
+    background: #1e293b;
+    border-color: #334155;
+    color: #f1f5f9;
 }
 
 #textInput:focus {
@@ -109,6 +151,10 @@ body {
 
 #textInput::placeholder {
     color: #94a3b8;
+}
+
+body.dark-mode #textInput::placeholder {
+    color: #64748b;
 }
 
 .tone-section {
@@ -122,6 +168,11 @@ body {
     font-size: 14px;
     font-weight: 500;
     color: #374151;
+    transition: color 0.3s ease;
+}
+
+body.dark-mode .tone-section label {
+    color: #cbd5e1;
 }
 
 .tone-select {
@@ -134,8 +185,14 @@ body {
     background: #ffffff;
     outline: none;
     cursor: pointer;
-    transition: border-color 0.2s ease;
+    transition: all 0.3s ease;
     color: #1e293b;
+}
+
+body.dark-mode .tone-select {
+    background: #1e293b;
+    border-color: #334155;
+    color: #f1f5f9;
 }
 
 .tone-select:focus {
@@ -275,6 +332,13 @@ body {
     margin-bottom: 24px;
     animation: slideDown 0.3s ease-out;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+}
+
+body.dark-mode .settings-panel {
+    background: #1e293b;
+    border-color: #334155;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
 }
 
 @keyframes slideDown {
@@ -287,6 +351,11 @@ body {
     color: #1e293b;
     font-size: 18px;
     font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+body.dark-mode .settings-panel h3 {
+    color: #f1f5f9;
 }
 
 .api-key-section {
