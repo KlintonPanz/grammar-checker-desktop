@@ -1,0 +1,38 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="backgroundGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#667eea"/>
+      <stop offset="100%" stop-color="#764ba2"/>
+    </linearGradient>
+    <linearGradient id="iconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f0f8ff"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background circle with glassmorphism effect -->
+  <circle cx="256" cy="256" r="240" fill="url(#backgroundGradient)" stroke="rgba(255,255,255,0.3)" stroke-width="4"/>
+
+  <!-- Main icon - stylized text transformation arrows -->
+  <g transform="translate(256, 256)">
+    <!-- Text lines representing original text -->
+    <rect x="-80" y="-40" width="100" height="8" rx="4" fill="url(#iconGradient)" opacity="0.8"/>
+    <rect x="-80" y="-20" width="120" height="8" rx="4" fill="url(#iconGradient)" opacity="0.8"/>
+    <rect x="-80" y="0" width="90" height="8" rx="4" fill="url(#iconGradient)" opacity="0.8"/>
+
+    <!-- Curved arrow indicating transformation -->
+    <path d="M -40 -10 Q 0 -40 40 -10" stroke="url(#iconGradient)" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M 30 -20 L 40 -10 L 30 0" stroke="url(#iconGradient)" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Text lines representing paraphrased text -->
+    <rect x="-20" y="20" width="110" height="8" rx="4" fill="url(#iconGradient)"/>
+    <rect x="-20" y="40" width="85" height="8" rx="4" fill="url(#iconGradient)"/>
+    <rect x="-20" y="60" width="130" height="8" rx="4" fill="url(#iconGradient)"/>
+
+    <!-- Sparkle effects to indicate AI magic -->
+    <circle cx="-100" cy="-60" r="3" fill="url(#iconGradient)" opacity="0.9"/>
+    <circle cx="100" cy="-50" r="2" fill="url(#iconGradient)" opacity="0.7"/>
+    <circle cx="-110" cy="80" r="2.5" fill="url(#iconGradient)" opacity="0.8"/>
+    <circle cx="110" cy="70" r="2" fill="url(#iconGradient)" opacity="0.6"/>
+  </g>
+</svg>

@@ -1,7 +1,7 @@
 {
-  "name": "grammar-checker-menubar",
+  "name": "paraphraser-menubar",
   "version": "1.0.0",
-  "description": "A menubar grammar checker and paraphrasing tool",
+  "description": "A beautiful paraphrasing tool with custom tones",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -9,7 +9,7 @@
     "build": "electron-builder",
     "dist": "electron-builder --publish=never"
   },
-  "keywords": ["grammar", "menubar", "electron", "paraphrasing"],
+  "keywords": ["paraphrasing", "writing", "electron", "productivity", "ai"],
   "author": "",
   "license": "MIT",
   "devDependencies": {
@@ -21,8 +21,8 @@
     "menubar": "^9.3.0"
   },
   "build": {
-    "appId": "com.grammarchecker.menubar",
-    "productName": "Grammar Checker",
+    "appId": "com.paraphraser.menubar",
+    "productName": "Paraphraser",
     "directories": {
       "output": "dist"
     },

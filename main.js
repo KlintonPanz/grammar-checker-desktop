@@ -12,15 +12,15 @@ const createTray = () => {
 
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: 'Check Grammar',
+      label: 'Quick Paraphrase',
       click: () => {
-        processClipboard('grammar');
+        processClipboard('paraphrase');
       }
     },
     {
-      label: 'Paraphrase',
+      label: 'Open Paraphraser',
       click: () => {
-        processClipboard('paraphrase');
+        createWindow();
       }
     },
     {
@@ -44,7 +44,7 @@ const createTray = () => {
   ]);
 
   tray.setContextMenu(contextMenu);
-  tray.setToolTip('Grammar Checker');
+  tray.setToolTip('Paraphraser - AI Writing Assistant');
 
   tray.on('click', () => {
     showWindow();
@@ -112,12 +112,12 @@ if (!gotTheLock) {
     createTray();
     createWindow();
 
-    globalShortcut.register('CommandOrControl+Shift+G', () => {
-      processClipboard('grammar');
-    });
-
     globalShortcut.register('CommandOrControl+Shift+P', () => {
       processClipboard('paraphrase');
+    });
+
+    globalShortcut.register('CommandOrControl+Shift+O', () => {
+      createWindow();
     });
   });
 }
