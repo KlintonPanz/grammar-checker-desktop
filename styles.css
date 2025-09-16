@@ -5,6 +5,7 @@
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 body {
     font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -18,10 +19,37 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Dark mode */
+/* Dark mode - Star Wars Theme */
 body.dark-mode {
-    background: #0f172a;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
     color: #f1f5f9;
+    position: relative;
+}
+
+/* Starfield effect for dark mode */
+body.dark-mode::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        radial-gradient(2px 2px at 20px 30px, #ffffff, transparent),
+        radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+        radial-gradient(1px 1px at 90px 40px, #ffffff, transparent),
+        radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.6), transparent),
+        radial-gradient(2px 2px at 160px 30px, #ffffff, transparent);
+    background-repeat: repeat;
+    background-size: 200px 100px;
+    animation: twinkle 20s linear infinite;
+    pointer-events: none;
+    z-index: -1;
+}
+
+@keyframes twinkle {
+    from { transform: translateY(0px); }
+    to { transform: translateY(-100px); }
 }
 
 .container {
@@ -43,14 +71,17 @@ body.dark-mode {
 .title-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     margin-bottom: 12px;
+    position: relative;
 }
 
 .header-buttons {
     display: flex;
     align-items: center;
     gap: 12px;
+    position: absolute;
+    right: 0;
 }
 
 .header h1 {
@@ -79,9 +110,10 @@ body.dark-mode .header h1 {
 
 body.dark-mode .settings-btn,
 body.dark-mode .theme-toggle-btn {
-    background: #1e293b;
-    border-color: #334155;
+    background: linear-gradient(135deg, #1e293b, #334155);
+    border: 1px solid rgba(59, 130, 246, 0.3);
     color: #94a3b8;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.1);
 }
 
 .settings-btn:hover, .theme-toggle-btn:hover {
@@ -93,8 +125,10 @@ body.dark-mode .theme-toggle-btn {
 
 body.dark-mode .settings-btn:hover,
 body.dark-mode .theme-toggle-btn:hover {
-    background: #334155;
+    background: linear-gradient(135deg, #334155, #475569);
     color: #e2e8f0;
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.5);
 }
 
 .settings-icon {
@@ -127,7 +161,7 @@ body.dark-mode .subtitle {
     border: 2px solid #e2e8f0;
     border-radius: 12px;
     font-size: 16px;
-    font-family: inherit;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
     resize: vertical;
     outline: none;
     background: #ffffff;
@@ -136,12 +170,41 @@ body.dark-mode .subtitle {
     min-height: 150px;
     max-height: 400px;
     color: #1e293b;
+    letter-spacing: 0.5px;
 }
 
 body.dark-mode #textInput {
     background: #1e293b;
     border-color: #334155;
     color: #f1f5f9;
+    position: relative;
+}
+
+/* Glowing gradient effect for dark mode */
+body.dark-mode #textInput:focus {
+    border: 2px solid transparent;
+    background: linear-gradient(#1e293b, #1e293b) padding-box,
+                linear-gradient(45deg, #3b82f6, #8b5cf6, #06b6d4, #3b82f6) border-box;
+    box-shadow:
+        0 0 20px rgba(59, 130, 246, 0.3),
+        0 0 40px rgba(139, 92, 246, 0.2),
+        0 0 60px rgba(6, 182, 212, 0.1);
+    animation: glow-pulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow-pulse {
+    from {
+        box-shadow:
+            0 0 20px rgba(59, 130, 246, 0.3),
+            0 0 40px rgba(139, 92, 246, 0.2),
+            0 0 60px rgba(6, 182, 212, 0.1);
+    }
+    to {
+        box-shadow:
+            0 0 30px rgba(59, 130, 246, 0.5),
+            0 0 60px rgba(139, 92, 246, 0.3),
+            0 0 90px rgba(6, 182, 212, 0.2);
+    }
 }
 
 #textInput:focus {
@@ -234,6 +297,19 @@ body.dark-mode .tone-select {
     background: #2563eb;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* Star Wars themed button for dark mode */
+body.dark-mode .btn.primary {
+    background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+    border: 1px solid rgba(59, 130, 246, 0.5);
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+}
+
+body.dark-mode .btn.primary:hover {
+    background: linear-gradient(45deg, #2563eb, #7c3aed);
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+    transform: translateY(-2px);
 }
 
 .btn.secondary {
