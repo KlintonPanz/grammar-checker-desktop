@@ -17,9 +17,6 @@ const toggleApiKeyBtn = document.getElementById('toggleApiKey');
 const saveApiKeyBtn = document.getElementById('saveApiKey');
 const testApiKeyBtn = document.getElementById('testApiKey');
 
-// Theme toggle elements
-const themeToggle = document.getElementById('themeToggle');
-const themeIcon = document.querySelector('.theme-icon');
 
 // Custom tone elements
 const createCustomToneBtn = document.getElementById('createCustomTone');
@@ -142,10 +139,6 @@ saveCustomToneBtn.addEventListener('click', () => {
     saveCustomTone();
 });
 
-// Theme Toggle Events
-themeToggle.addEventListener('click', () => {
-    toggleTheme();
-});
 
 // Tab Management Functions
 function showCustomToneTab() {
@@ -297,8 +290,6 @@ document.addEventListener('DOMContentLoaded', () => {
     displayCustomTones();
     updateToneDropdown();
 
-    // Load saved theme
-    loadSavedTheme();
 });
 
 // Test API Connection
@@ -350,31 +341,6 @@ if (savedTone) {
     toneSelect.value = savedTone;
 }
 
-// Theme Management Functions
-function toggleTheme() {
-    const body = document.body;
-    const isDarkMode = body.classList.contains('dark-mode');
-
-    if (isDarkMode) {
-        body.classList.remove('dark-mode');
-        themeIcon.textContent = '🌙';
-        localStorage.setItem('theme', 'light');
-    } else {
-        body.classList.add('dark-mode');
-        themeIcon.textContent = '☀️';
-        localStorage.setItem('theme', 'dark');
-    }
-}
-
-function loadSavedTheme() {
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
-        document.body.classList.add('dark-mode');
-        themeIcon.textContent = '☀️';
-    } else {
-        themeIcon.textContent = '🌙';
-    }
-}
 
 async function paraphrase() {
     const text = textInput.value.trim();
@@ -468,11 +434,17 @@ function showStatus(message, type = 'success') {
     loading.style.display = 'none';
     status.textContent = message;
     status.className = `status ${type}`;
+    status.style.display = 'flex';
     paraphraseBtn.disabled = false;
     toneSelect.disabled = false;
 
-    // Clear status after 3 seconds
+    // Hide status after 4 seconds with fade out
     setTimeout(() => {
-        status.textContent = '';
-    }, 3000);
+        status.style.opacity = '0';
+        setTimeout(() => {
+            status.style.display = 'none';
+            status.textContent = '';
+            status.style.opacity = '1';
+        }, 300);
+    }, 4000);
 }
