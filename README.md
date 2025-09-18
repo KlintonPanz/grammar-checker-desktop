@@ -50,9 +50,41 @@ A lightweight, modern desktop application for grammar checking and paraphrasing 
 
 ## 🏗️ Building for Distribution
 
+### ⚠️ Critical: Avoid Duplicate App Versions
+**To prevent confusion with multiple app versions running simultaneously:**
+
+1. **Always close existing apps** before building or running new versions
+2. **Use only ONE version at a time** - either development (`npm start`) OR built app (`dist/.../*.app`)
+3. **After rebuilding**, make sure to close the old built app and open the new one
+4. **Check which version you're running** - built apps won't reflect code changes until rebuilt
+
+### 🚨 Duplicate Version Issues
+**Common problems when multiple versions exist:**
+- Running old version while expecting new fixes
+- Loading state issues or other bugs that appear "unfixed"
+- Different behavior between development and production versions
+- Confusion about which app window you're using
+
+**Solution: Always rebuild after code changes:**
+```bash
+npm run build  # Updates the built app with latest code changes
+```
+
+### ⚠️ Important: Preserve Your Local Builds
+**Before building, backup your existing builds to avoid losing your local app:**
+```bash
+# Backup existing builds (optional)
+cp -r dist/ dist-backup/
+```
+
 ### For macOS:
 ```bash
-npm run build
+npm run build -- --mac
+```
+
+### For Windows:
+```bash
+npm run build -- --win
 ```
 
 ### For all platforms:
@@ -61,6 +93,17 @@ npm run build -- --mac --win --linux
 ```
 
 The built applications will be in the `dist/` folder.
+
+### 📁 Build Output Locations
+- **macOS**: `dist/mac-arm64/Paraphraser.app` (runnable app)
+- **macOS**: `dist/Paraphraser-1.0.0-arm64.dmg` (installer)
+- **Windows**: `dist/Paraphraser-1.0.0-x64.zip` (portable app)
+
+### 🚨 Build Safety Tips
+- The build process cleans the `dist/` folder, removing previous builds
+- Always backup important builds before running new builds
+- For development, use `npm start` instead of rebuilding frequently
+- Keep important releases saved outside the `dist/` folder
 
 ## 💡 Usage Tips
 
@@ -156,6 +199,70 @@ For typical usage (50 paraphrases per day):
 3. Make your changes
 4. Test thoroughly
 5. Submit a pull request
+
+## 📋 Changelog
+
+### v1.0.2 - 2025-09-18
+**🔧 Critical Loading State Fix & UI Improvements**
+- 🐛 **FIXED**: Persistent "Processing..." loading spinner that remained visible after paraphrasing completed
+- 🔧 **FIXED**: Loading state management with dynamic DOM element selection to prevent null reference errors
+- 🛡️ **IMPROVED**: Bulletproof error handling with `finally` blocks to guarantee loading state cleanup
+- ✨ **ENHANCED**: Star Wars holographic theme with improved toast notifications
+- 🔊 **ADDED**: Comprehensive sound system with toggle switches and multiple sound options
+- 🎨 **IMPROVED**: JetBrains Mono typewriter font for text input areas
+- 🗑️ **REMOVED**: Light mode - app now uses dark mode exclusively
+- 📝 **IMPROVED**: Shorter, cleaner notification text ("Paraphrased and copied ⚔️")
+- 🚨 **ADDED**: Duplicate app version warnings in documentation
+
+**Technical Improvements:**
+- Dynamic `document.getElementById()` calls instead of global variables for DOM elements
+- Robust `hideLoadingState()` function with comprehensive error handling
+- Enhanced `showToast()` function with guaranteed loading cleanup
+- Multiple fallback mechanisms for loading state management
+- Detailed console logging for debugging loading issues
+
+**Files Modified:**
+- `renderer.js` - Complete loading state management overhaul
+- `index.html` - Removed light mode toggle, added comprehensive sound settings
+- `styles.css` - Star Wars theme enhancement, toast notification system
+- `README.md` - Added duplicate app version warnings and changelog
+
+---
+
+### v1.0.1 - 2025-09-17
+**🔧 Windows Build Fix**
+- ✅ **FIXED**: Windows build configuration issues on Apple Silicon Mac
+- ✅ **ADDED**: Windows ZIP distribution method (no installer needed)
+- ✅ **ADDED**: Windows installation guide (README-Windows.txt)
+- ✅ **ADDED**: GitHub release with Windows build artifacts
+- ✅ **UPDATED**: Build safety documentation to prevent accidental local app deletion
+- ✅ **IMPROVED**: Cross-platform build process reliability
+- 🔄 **CHANGED**: Windows target from NSIS installer to ZIP format (due to Wine compatibility)
+
+**Files Modified:**
+- `package.json` - Updated Windows build configuration
+- `README.md` - Added build safety warnings and changelog
+- `dist/README-Windows.txt` - Created Windows installation guide
+
+**Technical Details:**
+- Windows builds now use ZIP format instead of NSIS due to Apple Silicon compatibility
+- Disabled code signing for Windows builds to avoid Wine dependency
+- Added build artifact naming conventions
+- Created comprehensive installation documentation
+
+---
+
+### v1.0.0 - Initial Release
+**🎉 First Release**
+- ✅ **CORE**: Grammar checking and paraphrasing with OpenAI GPT-3.5-turbo
+- ✅ **UI**: Clean, modern interface with 6 tone options
+- ✅ **FEATURES**: System tray integration, global shortcuts, auto-copy
+- ✅ **SECURITY**: Local API key storage, no telemetry
+- ✅ **PLATFORMS**: macOS support with DMG installer
+
+---
+
+*This changelog will be updated with every modification to track development history.*
 
 ## 📄 License
 

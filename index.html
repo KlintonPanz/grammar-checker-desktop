@@ -40,6 +40,36 @@
                     <p class="api-key-help">Get your API key from <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI Platform</a></p>
                 </div>
 
+                <div class="sound-settings-section">
+                    <h4>Sound Settings</h4>
+                    <div class="sound-option">
+                        <label for="soundEnabled">Enable Sound Effects:</label>
+                        <div class="toggle-container">
+                            <input type="checkbox" id="soundEnabled" class="sound-toggle" checked>
+                            <label for="soundEnabled" class="toggle-slider"></label>
+                        </div>
+                    </div>
+                    <div class="sound-option">
+                        <label for="successSoundType">Success Sound:</label>
+                        <select id="successSoundType" class="sound-select">
+                            <option value="starwars">Star Wars (Default)</option>
+                            <option value="chime">Classic Chime</option>
+                            <option value="beep">Tech Beep</option>
+                            <option value="ding">Notification Ding</option>
+                        </select>
+                    </div>
+                    <div class="sound-option">
+                        <label for="errorSoundType">Error Sound:</label>
+                        <select id="errorSoundType" class="sound-select">
+                            <option value="warning">Warning (Default)</option>
+                            <option value="buzz">Error Buzz</option>
+                            <option value="alert">Alert Tone</option>
+                            <option value="none">No Sound</option>
+                        </select>
+                    </div>
+                    <button id="testSounds" class="btn small tertiary">Test Sounds</button>
+                </div>
+
                 <div class="custom-tone-section">
                     <h4>Custom Tones</h4>
                     <button id="createCustomTone" class="btn small secondary">

@@ -18,6 +18,12 @@ const saveApiKeyBtn = document.getElementById('saveApiKey');
 const testApiKeyBtn = document.getElementById('testApiKey');
 
 
+// Sound settings elements
+const soundEnabledToggle = document.getElementById('soundEnabled');
+const successSoundSelect = document.getElementById('successSoundType');
+const errorSoundSelect = document.getElementById('errorSoundType');
+const testSoundsBtn = document.getElementById('testSounds');
+
 // Custom tone elements
 const createCustomToneBtn = document.getElementById('createCustomTone');
 const customTonesList = document.getElementById('customTonesList');
@@ -137,6 +143,23 @@ backToSettingsBtn.addEventListener('click', () => {
 
 saveCustomToneBtn.addEventListener('click', () => {
     saveCustomTone();
+});
+
+// Sound Settings Events
+soundEnabledToggle.addEventListener('change', () => {
+    saveSoundSettings();
+});
+
+successSoundSelect.addEventListener('change', () => {
+    saveSoundSettings();
+});
+
+errorSoundSelect.addEventListener('change', () => {
+    saveSoundSettings();
+});
+
+testSoundsBtn.addEventListener('click', () => {
+    testSounds();
 });
 
 
@@ -290,6 +313,9 @@ document.addEventListener('DOMContentLoaded', () => {
     displayCustomTones();
     updateToneDropdown();
 
+    // Load sound settings
+    loadSoundSettings();
+
 });
 
 // Test API Connection
@@ -376,6 +402,52 @@ async function paraphrase() {
     await processText('paraphrase', prompt, apiKey);
 }
 
+// Guaranteed loading state cleanup function
+function hideLoadingState() {
+    console.log('hideLoadingState() called');
+
+    // Get elements dynamically to avoid null reference issues
+    const loadingElement = document.getElementById('loading');
+    const paraphraseButton = document.getElementById('paraphrase');
+    const toneSelector = document.getElementById('toneSelect');
+    const textInputElement = document.getElementById('textInput');
+
+    console.log('loadingElement found:', !!loadingElement);
+    console.log('loadingElement:', loadingElement);
+
+    try {
+        // Hide loading spinner
+        if (loadingElement) {
+            loadingElement.style.display = 'none';
+            console.log('Successfully hid loading element');
+        } else {
+            console.error('Loading element not found! DOM might not be ready.');
+        }
+
+        // Re-enable button and remove processing state
+        if (paraphraseButton) {
+            paraphraseButton.disabled = false;
+            paraphraseButton.classList.remove('processing');
+            console.log('Re-enabled paraphrase button');
+        }
+
+        // Re-enable tone selector
+        if (toneSelector) {
+            toneSelector.disabled = false;
+        }
+
+        // Remove processing class from text input
+        if (textInputElement) {
+            textInputElement.classList.remove('processing');
+        }
+    } catch (error) {
+        console.error('Error hiding loading state:', error);
+        // Force hide loading even if cleanup fails
+        const forceLoadingElement = document.getElementById('loading');
+        if (forceLoadingElement) forceLoadingElement.style.display = 'none';
+    }
+}
+
 async function processText(type, prompt, apiKey) {
     showLoading();
 
@@ -390,7 +462,7 @@ async function processText(type, prompt, apiKey) {
 
         // Show success status with tone
         const selectedTone = toneSelect.value;
-        showStatus(`Paraphrased (${selectedTone}) & copied! ✓`, 'success');
+        showToast('Paraphrased and copied ⚔️');
 
         // Auto-select the result
         textInput.focus();
@@ -398,12 +470,15 @@ async function processText(type, prompt, apiKey) {
 
     } catch (error) {
         if (error.response?.status === 401) {
-            showStatus('Invalid API key. Please check your settings.', 'error');
+            showToast('Invalid API key. Please check settings.', 'error');
             settingsPanel.style.display = 'block';
         } else {
-            showStatus(`Error: ${error.message}`, 'error');
+            showToast(`Error: ${error.message}`, 'error');
         }
         console.error('Error:', error);
+    } finally {
+        // GUARANTEE that loading state is always hidden
+        hideLoadingState();
     }
 }
 
@@ -428,6 +503,10 @@ function showLoading() {
     status.textContent = '';
     paraphraseBtn.disabled = true;
     toneSelect.disabled = true;
+
+    // Add processing animations
+    paraphraseBtn.classList.add('processing');
+    textInput.classList.add('processing');
 }
 
 function showStatus(message, type = 'success') {
@@ -438,6 +517,17 @@ function showStatus(message, type = 'success') {
     paraphraseBtn.disabled = false;
     toneSelect.disabled = false;
 
+    // Remove processing animations
+    paraphraseBtn.classList.remove('processing');
+    textInput.classList.remove('processing');
+
+    // Play sound effect
+    if (type === 'success') {
+        playSuccessSound();
+    } else if (type === 'error') {
+        playErrorSound();
+    }
+
     // Hide status after 4 seconds with fade out
     setTimeout(() => {
         status.style.opacity = '0';
@@ -447,4 +537,296 @@ function showStatus(message, type = 'success') {
             status.style.opacity = '1';
         }, 300);
     }, 4000);
+}
+
+// Sound Effect Functions
+function playSuccessSound() {
+    const soundSettings = getSoundSettings();
+    if (!soundSettings.enabled) return;
+
+    playSound('success', soundSettings.successType);
+}
+
+function playErrorSound() {
+    const soundSettings = getSoundSettings();
+    if (!soundSettings.enabled) return;
+
+    const errorType = soundSettings.errorType;
+    if (errorType === 'none') return;
+
+    playSound('error', errorType);
+}
+
+function playSound(category, type) {
+    try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        if (category === 'success') {
+            switch (type) {
+                case 'starwars':
+                    playStarWarsSuccess(audioContext);
+                    break;
+                case 'chime':
+                    playChimeSound(audioContext);
+                    break;
+                case 'beep':
+                    playTechBeep(audioContext);
+                    break;
+                case 'ding':
+                    playNotificationDing(audioContext);
+                    break;
+            }
+        } else if (category === 'error') {
+            switch (type) {
+                case 'warning':
+                    playWarningSound(audioContext);
+                    break;
+                case 'buzz':
+                    playErrorBuzz(audioContext);
+                    break;
+                case 'alert':
+                    playAlertTone(audioContext);
+                    break;
+            }
+        }
+    } catch (error) {
+        console.log('Audio playback not available:', error);
+    }
+}
+
+function playStarWarsSuccess(audioContext) {
+    const oscillator1 = audioContext.createOscillator();
+    const oscillator2 = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator1.connect(gainNode);
+    oscillator2.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator1.frequency.setValueAtTime(523.25, audioContext.currentTime);
+    oscillator1.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1);
+    oscillator1.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2);
+
+    oscillator2.frequency.setValueAtTime(261.63, audioContext.currentTime);
+    oscillator2.frequency.setValueAtTime(329.63, audioContext.currentTime + 0.1);
+    oscillator2.frequency.setValueAtTime(392.00, audioContext.currentTime + 0.2);
+
+    oscillator1.type = 'sine';
+    oscillator2.type = 'triangle';
+
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+
+    oscillator1.start(audioContext.currentTime);
+    oscillator2.start(audioContext.currentTime);
+    oscillator1.stop(audioContext.currentTime + 0.4);
+    oscillator2.stop(audioContext.currentTime + 0.4);
+}
+
+function playChimeSound(audioContext) {
+    const frequencies = [523.25, 659.25, 783.99]; // C5, E5, G5
+
+    frequencies.forEach((freq, index) => {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        oscillator.frequency.setValueAtTime(freq, audioContext.currentTime + index * 0.1);
+        oscillator.type = 'sine';
+
+        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime + index * 0.1);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + index * 0.1 + 0.5);
+
+        oscillator.start(audioContext.currentTime + index * 0.1);
+        oscillator.stop(audioContext.currentTime + index * 0.1 + 0.5);
+    });
+}
+
+function playTechBeep(audioContext) {
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+    oscillator.type = 'square';
+
+    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.2);
+}
+
+function playNotificationDing(audioContext) {
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.frequency.setValueAtTime(1000, audioContext.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(500, audioContext.currentTime + 0.3);
+    oscillator.type = 'sine';
+
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.3);
+}
+
+function playWarningSound(audioContext) {
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.frequency.setValueAtTime(220, audioContext.currentTime);
+    oscillator.frequency.setValueAtTime(185, audioContext.currentTime + 0.15);
+    oscillator.frequency.setValueAtTime(220, audioContext.currentTime + 0.3);
+
+    oscillator.type = 'sawtooth';
+
+    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.5);
+}
+
+function playErrorBuzz(audioContext) {
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.frequency.setValueAtTime(150, audioContext.currentTime);
+    oscillator.type = 'sawtooth';
+
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.setValueAtTime(0, audioContext.currentTime + 0.1);
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime + 0.2);
+    gainNode.gain.setValueAtTime(0, audioContext.currentTime + 0.3);
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime + 0.4);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.6);
+
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.6);
+}
+
+function playAlertTone(audioContext) {
+    [600, 400, 600, 400].forEach((freq, index) => {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        oscillator.frequency.setValueAtTime(freq, audioContext.currentTime + index * 0.15);
+        oscillator.type = 'triangle';
+
+        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime + index * 0.15);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + index * 0.15 + 0.15);
+
+        oscillator.start(audioContext.currentTime + index * 0.15);
+        oscillator.stop(audioContext.currentTime + index * 0.15 + 0.15);
+    });
+}
+
+// Sound Settings Management
+function getSoundSettings() {
+    const defaults = {
+        enabled: true,
+        successType: 'starwars',
+        errorType: 'warning'
+    };
+
+    try {
+        const saved = localStorage.getItem('soundSettings');
+        return saved ? { ...defaults, ...JSON.parse(saved) } : defaults;
+    } catch (error) {
+        return defaults;
+    }
+}
+
+function saveSoundSettings() {
+    const settings = {
+        enabled: soundEnabledToggle.checked,
+        successType: successSoundSelect.value,
+        errorType: errorSoundSelect.value
+    };
+
+    localStorage.setItem('soundSettings', JSON.stringify(settings));
+}
+
+function loadSoundSettings() {
+    const settings = getSoundSettings();
+
+    soundEnabledToggle.checked = settings.enabled;
+    successSoundSelect.value = settings.successType;
+    errorSoundSelect.value = settings.errorType;
+}
+
+function testSounds() {
+    const settings = getSoundSettings();
+
+    // Test success sound
+    playSound('success', settings.successType);
+
+    // Test error sound after a delay
+    setTimeout(() => {
+        if (settings.errorType !== 'none') {
+            playSound('error', settings.errorType);
+        }
+    }, 1000);
+}
+
+// Simple Toast Notification System
+function showToast(message, type = 'success') {
+    // Ensure we never leave the spinner visible if toast triggers outside the normal flow
+    hideLoadingState();
+
+    // Note: Loading state cleanup is handled by hideLoadingState() in processText finally block
+
+    // Remove any existing toasts
+    const existingToast = document.querySelector('.toast-notification');
+    if (existingToast) {
+        existingToast.remove();
+    }
+
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = `toast-notification toast-${type}`;
+    toast.textContent = message;
+
+    // Add to body
+    document.body.appendChild(toast);
+
+    // Play sound
+    if (type === 'success') {
+        playSuccessSound();
+    } else if (type === 'error') {
+        playErrorSound();
+    }
+
+    // Show with animation
+    setTimeout(() => {
+        toast.classList.add('toast-show');
+    }, 10);
+
+    // Hide and remove after 3 seconds
+    setTimeout(() => {
+        toast.classList.add('toast-hide');
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.remove();
+            }
+        }, 300);
+    }, 3000);
 }

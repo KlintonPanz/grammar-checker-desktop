@@ -37,12 +37,25 @@
       "category": "public.app-category.productivity"
     },
     "win": {
-      "target": "nsis",
-      "icon": "assets/icon.ico"
+      "target": [
+        {
+          "target": "zip",
+          "arch": ["x64"]
+        }
+      ],
+      "publisherName": "Paraphraser",
+      "verifyUpdateCodeSignature": false,
+      "executableName": "Paraphraser",
+      "artifactName": "${productName}-${version}-${arch}.${ext}",
+      "signAndEditExecutable": false,
+      "signDlls": false
     },
     "nsis": {
       "oneClick": false,
-      "allowToChangeInstallationDirectory": true
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Paraphraser"
     }
   }
 }
